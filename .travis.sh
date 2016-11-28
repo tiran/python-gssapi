@@ -68,7 +68,8 @@ F8_PY=$?
 # E227: missing whitespace around bitwise or shift operator
 # E402: module level import not at top of file
 # E901: SyntaxError or IndentationError
-flake8 gssapi --filename='*.pyx,*.pxd' --ignore=E225,E226,E227,E402,E901
+# E999: Internal AST compilation error (flake8 specific)
+flake8 gssapi --filename='*.pyx,*.pxd' --ignore=E225,E226,E227,E402,E901,E999
 F8_MAIN_CYTHON=$?
 
 python setup.py nosetests --verbosity=3
