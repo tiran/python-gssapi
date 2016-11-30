@@ -1,5 +1,7 @@
 #!/bin/sh
 
+source ./.venv/bin/activate
+
 # build the docs
 # the first run is for the docs build, so don't clean up
 pip install -r docs-requirements.txt

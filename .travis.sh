@@ -1,6 +1,9 @@
 #!/bin/bash -ex
 
 if [ -f /etc/debian_version ]; then
+    # gotta go fast
+    sed -i 's/deb.debian.org/httpredir.debian.org/g' /etc/apt/sources.list
+
     export DEBIAN_FRONTEND=noninteractive
     apt-get update
 
@@ -11,40 +14,29 @@ if [ -f /etc/debian_version ]; then
     fi
 
     if [ x"$PYTHON" = "x3" ]; then
-        apt-get -y install python3-pip python3-dev
+        apt-get -y install gcc virtualenv python3-virtualenv python3-dev
     else
-        apt-get -y install python-pip python-dev
+        apt-get -y install gcc virtualenv python-virtualenv python-dev
     fi
 elif [ -f /etc/redhat-release ]; then
     # yum has no update-only verb
 
-    if [ ! -f /etc/fedora-release ]; then
-        # some python tooling is EPEL-only
-        rpm -i https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-    else
-        # if we don't have it, gcc doesn't work
-        yum install -y redhat-rpm-config
-    fi
-
     yum -y install krb5-{devel,libs,server,workstation} which gcc findutils
 
-    if [ x"$PYTHON" = "x3" ]; then
-        yum -y install python3-pip python3-devel
-    elif [ -f /etc/fedora-release ]; then
-        # rawhide will default to python3...
-        yum -y install python2-pip python2-devel
+    if [ -f /etc/fedora-release ]; then
+        # path to binary here in case Rawhide changes it
+        yum install -y redhat-rpm-config \
+            /usr/bin/virtualenv python${PYTHON}-{virtualenv,devel}
     else
-        # ... but el7 doesn't use python2-
-        yum -y install python-pip python-devel
+        yum install -y python-virtualenv python${PYTHON}-devel
     fi
 else
     echo "Distro not found!"
     false
 fi
 
-rm -f $(which python) $(which pip) || true
-ln -sv $(which python${PYTHON}) /usr/bin/python
-ln -sv $(which pip${PYTHON}) /usr/bin/pip
+virtualenv -p $(which python${PYTHON}) .venv
+source ./.venv/bin/activate
 
 pip install --upgrade pip # el7 pip doesn't quite work right
 pip install --install-option='--no-cython-compile' cython
