@@ -35,7 +35,7 @@ else
     false
 fi
 
-virtualenv -p $(which python${PYTHON}) .venv
+virtualenv --always-copy -p $(which python${PYTHON}) .venv
 source ./.venv/bin/activate
 
 pip install --upgrade pip # el7 pip doesn't quite work right

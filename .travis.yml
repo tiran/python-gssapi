@@ -31,8 +31,8 @@ before_deploy:
     docker run
     -v `pwd`:/tmp/build
     -w /tmp/build
-    -e KRB5_VER=$KRB5_VER
-    -e PYTHON=$PYTHON
+    -e TRAVIS_TAG=$TRAVIS_TAG
+    -e PKG_NAME_VER=$PKG_NAME_VER
     $DISTRO
     /bin/sh -x .travis.before-deploy.sh
 deploy:
